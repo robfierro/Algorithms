@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E133F1D61EAB0CFF00EE576A /* AlgorithmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133F1D51EAB0CFF00EE576A /* AlgorithmViewController.swift */; };
+		E198B0351EAF00D8005DD228 /* InsertSortViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198B0341EAF00D8005DD228 /* InsertSortViewController.swift */; };
+		E198B0371EAF05C4005DD228 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198B0361EAF05C4005DD228 /* utils.swift */; };
 		E1C5A8371EA9A76300E707A9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5A8361EA9A76300E707A9 /* AppDelegate.swift */; };
-		E1C5A8391EA9A76300E707A9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5A8381EA9A76300E707A9 /* ViewController.swift */; };
 		E1C5A83C1EA9A76300E707A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C5A83A1EA9A76300E707A9 /* Main.storyboard */; };
 		E1C5A83E1EA9A76400E707A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1C5A83D1EA9A76400E707A9 /* Assets.xcassets */; };
 		E1C5A8411EA9A76400E707A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C5A83F1EA9A76400E707A9 /* LaunchScreen.storyboard */; };
 		E1C5A84C1EA9A76400E707A9 /* AlgorithmsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5A84B1EA9A76400E707A9 /* AlgorithmsTests.swift */; };
 		E1C5A8571EA9A76400E707A9 /* AlgorithmsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5A8561EA9A76400E707A9 /* AlgorithmsUITests.swift */; };
+		E1C5A8691EA9AD8900E707A9 /* AlgorithmsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5A8681EA9AD8900E707A9 /* AlgorithmsTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,9 +37,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E133F1D51EAB0CFF00EE576A /* AlgorithmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlgorithmViewController.swift; sourceTree = "<group>"; };
+		E198B0341EAF00D8005DD228 /* InsertSortViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsertSortViewController.swift; sourceTree = "<group>"; };
+		E198B0361EAF05C4005DD228 /* utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
 		E1C5A8331EA9A76300E707A9 /* Algorithms.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Algorithms.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C5A8361EA9A76300E707A9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E1C5A8381EA9A76300E707A9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E1C5A83B1EA9A76300E707A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E1C5A83D1EA9A76400E707A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E1C5A8401EA9A76400E707A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +52,7 @@
 		E1C5A8521EA9A76400E707A9 /* AlgorithmsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlgorithmsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C5A8561EA9A76400E707A9 /* AlgorithmsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgorithmsUITests.swift; sourceTree = "<group>"; };
 		E1C5A8581EA9A76400E707A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E1C5A8681EA9AD8900E707A9 /* AlgorithmsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlgorithmsTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,11 +104,14 @@
 			isa = PBXGroup;
 			children = (
 				E1C5A8361EA9A76300E707A9 /* AppDelegate.swift */,
-				E1C5A8381EA9A76300E707A9 /* ViewController.swift */,
 				E1C5A83A1EA9A76300E707A9 /* Main.storyboard */,
 				E1C5A83D1EA9A76400E707A9 /* Assets.xcassets */,
 				E1C5A83F1EA9A76400E707A9 /* LaunchScreen.storyboard */,
 				E1C5A8421EA9A76400E707A9 /* Info.plist */,
+				E1C5A8681EA9AD8900E707A9 /* AlgorithmsTableViewController.swift */,
+				E133F1D51EAB0CFF00EE576A /* AlgorithmViewController.swift */,
+				E198B0341EAF00D8005DD228 /* InsertSortViewController.swift */,
+				E198B0361EAF05C4005DD228 /* utils.swift */,
 			);
 			path = Algorithms;
 			sourceTree = "<group>";
@@ -262,7 +271,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1C5A8391EA9A76300E707A9 /* ViewController.swift in Sources */,
+				E198B0351EAF00D8005DD228 /* InsertSortViewController.swift in Sources */,
+				E198B0371EAF05C4005DD228 /* utils.swift in Sources */,
+				E1C5A8691EA9AD8900E707A9 /* AlgorithmsTableViewController.swift in Sources */,
+				E133F1D61EAB0CFF00EE576A /* AlgorithmViewController.swift in Sources */,
 				E1C5A8371EA9A76300E707A9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,6 +526,7 @@
 				E1C5A85D1EA9A76400E707A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E1C5A85E1EA9A76400E707A9 /* Build configuration list for PBXNativeTarget "AlgorithmsTests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +535,7 @@
 				E1C5A8601EA9A76400E707A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E1C5A8611EA9A76400E707A9 /* Build configuration list for PBXNativeTarget "AlgorithmsUITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +544,7 @@
 				E1C5A8631EA9A76400E707A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
