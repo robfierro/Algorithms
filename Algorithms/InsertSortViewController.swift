@@ -10,26 +10,8 @@ import UIKit
 
 class InsertSortViewController: UIViewController, AlgorithmDelegate {
 
-    private let items = 9
-    private let spacing = 12
-    
-    private var list:[UILabel] = [UILabel]()
-    private var isSorted:Bool = false
-    private var width:CGFloat {
-        get {
-            let freeSpace = self.view.bounds.width - 20 - CGFloat(self.items+1)*CGFloat(spacing)
-            return floor(freeSpace/CGFloat(self.items))
-        }
-    }
-    
-    private let stepByStepQueue = DispatchQueue(label: "stepByStepQueue")
-    
-    private var isSolveStopped:Bool = true
-    private var stepIndex:Int = 0
-    private var stepSecondaryIndex:Int = 0;
-    private var key:UILabel!
-    
-    enum InsetionSortOperation {
+    // MARK: - Enums
+    private enum InsetionSortOperation {
         case grayOutFirstElement
         case moveDown
         case moveLeft
@@ -37,15 +19,41 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         case moveUp
     }
     
-    private var path:[(element:UILabel, index:Int, operation:InsetionSortOperation)] = []
+    // MARK: - Configuration Constants
+    private let items = 9
     
+    // MARK: - UI Constants
+    private let spacing = 12
+    private let stepByStepQueue = DispatchQueue(label: "stepByStepQueue")
+    
+    // MARK: - UI Variables
+    private var labelColors:Dictionary<String, UIColor> = Dictionary<String, UIColor>()
+    private var width:CGFloat {
+        get {
+            let freeSpace = self.view.bounds.width - 20 - CGFloat(self.items+1)*CGFloat(spacing)
+            return floor(freeSpace/CGFloat(self.items))
+        }
+    }
+    
+    // MARK: - Model Variables
+    private var list:[UILabel] = [UILabel]()
+    private var stepIndex:Int = 0
+    private var stepSecondaryIndex:Int = 0;
+    private var key:UILabel!
+    
+    private var isSorted:Bool = false
+    private var isSolveStopped:Bool = true
+    
+    private var path:Stack<(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)> = Stack<(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)>()
+    
+   // MARK: - View Life Cycle and Configuration
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.setupView()
     }
     
-    func setupView() {
+    private func setupView() {
         
         self.view.backgroundColor = UIColor(white: 7, alpha: 3)
         self.view.translatesAutoresizingMaskIntoConstraints = false
@@ -60,6 +68,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
             label.font = UIFont.boldSystemFont(ofSize: 20)
             label.backgroundColor = UIColor.randomNonRepetingColor(clean:self.items)
             label.textColor = label.backgroundColor?.blackOrWhiteContrastingColor()
+            self.labelColors.updateValue(label.backgroundColor! , forKey: label.text!)
             label.textAlignment = .center
             label.layer.cornerRadius = 5
             label.layer.masksToBounds = true
@@ -69,7 +78,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func multiplier(atIndex index:Int) -> CGFloat {
+    private func multiplier(atIndex index:Int) -> CGFloat {
         
         let xWidthPorcent:CGFloat = width/(self.view.bounds.width - 20)
         let xSpacingPorcent:CGFloat = CGFloat(spacing)/(self.view.bounds.width - 20)
@@ -77,7 +86,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         return ((xWidthPorcent+xSpacingPorcent)*CGFloat(index)*2) - xLeadTrailSpace
     }
     
-    func addContraintForLabel(label:UILabel, index:Int) {
+    private func addContraintForLabel(label:UILabel, index:Int) {
         
         let number = CGFloat(Int(label.text!)!)
         let heightConstant = width + width*(number/2)
@@ -96,7 +105,8 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func moveLabelDown(label:UILabel) {
+    // MARK: - Constraints Methods
+    private func moveLabelDown(label:UILabel) {
         
         for contraint in self.view.constraints where (contraint.identifier == "y-\(label.text)") {
             contraint.constant = 150
@@ -104,7 +114,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func moveLabelUp(label:UILabel) {
+    private func moveLabelUp(label:UILabel) {
         
         for contraint in self.view.constraints where (contraint.identifier == "y-\(label.text)") {
             contraint.constant = 0
@@ -112,7 +122,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func moveLabelLeft(atIndex index:Int, label:UILabel) {
+    private func moveLabelLeft(atIndex index:Int, label:UILabel) {
         
         for var contraint in self.view.constraints where (contraint.identifier == "x-\(label.text)") {
             contraint = contraint.setMultiplier(multiplier: self.multiplier(atIndex: index))
@@ -120,7 +130,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func moveLabelRight(atIndex index:Int, label:UILabel) {
+    private func moveLabelRight(atIndex index:Int, label:UILabel) {
         
         for var contraint in self.view.constraints where (contraint.identifier == "x-\(label.text)") {
             contraint = contraint.setMultiplier(multiplier: self.multiplier(atIndex: index+2))
@@ -128,7 +138,8 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func animateLabelDown(label:UILabel, completion:@escaping (Void) -> Void) {
+    // MARK: - Animation Methods
+    private func animateLabelDown(label:UILabel, completion:@escaping (Void) -> Void) {
         DispatchQueue.main.async {
             UIView.animate(withDuration: Double(0.5), delay:0.1, options: [.curveEaseInOut], animations: {
                 self.moveLabelDown(label: label)
@@ -138,7 +149,7 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func animateLabelsLeftToRight(left:(UILabel, Int), right:(UILabel,Int), completion:@escaping (Void) -> Void) {
+    private func animateLabelsLeftToRight(left:(UILabel, Int), right:(UILabel,Int), completion:@escaping (Void) -> Void) {
 
         DispatchQueue.main.async {
             UIView.animate(withDuration: Double(0.5), delay:0.1, options: [.curveEaseInOut], animations: {
@@ -150,86 +161,113 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         }
     }
     
-    func animateLabelUp(label:UILabel, completion:@escaping (Void) -> Void) {
+    private func animateLabelUp(label:UILabel, completion:@escaping (Void) -> Void) {
         
         DispatchQueue.main.async {
             UIView.animate(withDuration: Double(0.5), delay:0.2, options: [.curveEaseInOut], animations: {
                 self.moveLabelUp(label:label)
                 }, completion: { success in
-                    label.backgroundColor = .gray
-                    label.textColor = .white
                     completion()
             })
         }
     }
     
-    func insertionSort(list:[Int]) -> [Int] {
-        
-        var A = list
-        for primaryIndex in 1..<A.count {
-            
-            let key = A[primaryIndex]
-            var secondaryIndex = primaryIndex - 1
-            
-            while (secondaryIndex >= 0 && key > A[secondaryIndex]) {
-                A[secondaryIndex+1] = A[secondaryIndex]
-                secondaryIndex-=1
-            }
-            
-            A[secondaryIndex+1] = key
-            
-        }
-        
-        return A
-    }
-    
-    func grayOutFirsElementOperation() {
+    // MARK: - Step By Step Operations
+    private func grayOutFirsElementOperation() {
         
         self.stepByStepQueue.sync {
             self.list.first!.backgroundColor = .gray
             self.list.first!.textColor = .white
-            self.path.append((self.list.first!, index: 0, operation:.grayOutFirstElement))
+            self.path.push((self.list.first!, elementIndex: 0, secondaryIndex:self.stepSecondaryIndex, primaryIndex:self.stepIndex,operation:.grayOutFirstElement))
         }
     }
     
-    func moveDownElement() {
+    private func moveDownElement() {
         self.stepByStepQueue.sync {
+            
+            if let label = self.key {
+                label.backgroundColor = .gray
+                label.textColor = .white
+            }
             self.key = self.list[self.stepIndex]
             self.animateLabelDown(label: self.key) {
                 
                 if(!self.isSolveStopped) { self.step() }
             }
-            self.path.append((self.key, index: self.stepIndex, operation:.moveDown))
+            self.path.push((self.key, elementIndex: self.stepIndex, secondaryIndex:self.stepSecondaryIndex, primaryIndex:self.stepIndex, operation:.moveDown))
             self.stepSecondaryIndex = self.stepIndex-1;
         }
     }
     
-    func moveLeftToRightElements() {
+    private func moveLeftToRightElements() {
         self.stepByStepQueue.sync {
             self.animateLabelsLeftToRight(left: (key, self.stepSecondaryIndex + 1), right: (self.list[self.stepSecondaryIndex], self.stepSecondaryIndex)) {
                 
                 if(!self.isSolveStopped) { self.step() }
             }
             
-            self.path.append((self.key, index: self.stepSecondaryIndex + 1, operation:.moveLeft))
-            self.path.append((self.list[self.stepSecondaryIndex], index: self.stepSecondaryIndex, operation:.moveRight))
+            self.path.push((self.key, elementIndex: self.stepSecondaryIndex + 1, secondaryIndex:self.stepSecondaryIndex, primaryIndex:self.stepIndex, operation:.moveLeft))
+            self.path.push((self.list[self.stepSecondaryIndex], elementIndex: self.stepSecondaryIndex, secondaryIndex:self.stepSecondaryIndex, primaryIndex:self.stepIndex, operation:.moveRight))
             self.list[self.stepSecondaryIndex + 1] = self.list[self.stepSecondaryIndex]
             self.stepSecondaryIndex-=1
         }
     }
     
-    func moveUpKeyElement(){
+    private func moveUpKeyElement(){
         self.stepByStepQueue.sync {
             self.animateLabelUp(label: self.key) {
-                
                 if(!self.isSolveStopped) { self.step() }
             }
-            self.path.append((self.key, index: self.stepSecondaryIndex + 1, operation:.moveUp))
+            self.path.push((self.key, elementIndex: self.stepSecondaryIndex + 1, secondaryIndex:self.stepSecondaryIndex, primaryIndex:self.stepIndex, operation:.moveUp))
             self.list[self.stepSecondaryIndex + 1] = self.key
             self.stepIndex+=1
         }
     }
     
+    private func inverseMoveUp(element:(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)) {
+        self.stepByStepQueue.sync {
+            self.key = element.element
+            self.key.backgroundColor = self.labelColors[self.key.text!]
+            self.key.textColor = self.key.backgroundColor!.blackOrWhiteContrastingColor()
+            self.animateLabelDown(label: self.key) { }
+            self.stepSecondaryIndex = element.secondaryIndex
+            self.stepIndex = element.primaryIndex
+        }
+    }
+    
+    private func inverseMoveRightToLeft(right:(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation), left:(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)) {
+        
+        self.stepByStepQueue.sync {
+            self.key = left.element
+            self.stepSecondaryIndex = right.secondaryIndex
+            self.stepIndex = right.primaryIndex
+            self.animateLabelsLeftToRight(left: (right.element, left.elementIndex), right: (self.key, right.elementIndex)) {}
+            self.list[self.stepSecondaryIndex] = right.element
+        }
+    }
+    
+    private func inverseMoveDown(element:(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)) {
+        
+        self.stepByStepQueue.sync {
+            self.key = element.element
+            self.stepSecondaryIndex = element.secondaryIndex
+            self.stepIndex = element.primaryIndex
+            self.animateLabelUp(label: self.key) {}
+            self.list[self.stepIndex] = self.key
+        }
+    }
+    
+    private func inverseGrayOut(element:(element:UILabel, elementIndex:Int, secondaryIndex:Int, primaryIndex:Int, operation:InsetionSortOperation)) {
+        self.stepByStepQueue.sync {
+            self.key = element.element
+            self.stepSecondaryIndex = element.secondaryIndex
+            self.stepIndex = element.primaryIndex
+            self.list.first!.backgroundColor = UIColor.generatedColors.first
+            self.list.first!.textColor = UIColor.generatedColors.first!.blackOrWhiteContrastingColor()
+        }
+    }
+    
+    //MARK: - AlgorithmDelegate Methods
     public func solve() {
         
         self.isSolveStopped = false
@@ -250,10 +288,13 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         guard self.stepIndex < self.list.count else {
             self.isSorted = true;
             self.isSolveStopped = true;
+            self.key.backgroundColor = .gray
+            self.key.textColor = .white
+            print(self.list)
             return
         }
         
-        let operation:InsetionSortOperation = (self.path.last?.operation)!
+        let operation:InsetionSortOperation = (self.path.peek()?.operation)!
         
         switch (operation) {
             case InsetionSortOperation.grayOutFirstElement:
@@ -278,12 +319,63 @@ class InsertSortViewController: UIViewController, AlgorithmDelegate {
         
     }
     
-    public func back() {
+    public func back(shouldStopSolve:Bool = false) {
         
+        self.isSorted = false;
+        
+        if shouldStopSolve {
+            self.isSolveStopped = true
+        }
+        
+        if(self.path.isEmpty) {
+            return
+        }
+
+        let move = self.path.pop()
+        
+        switch (move!.operation) {
+            case InsetionSortOperation.moveUp:
+                self.inverseMoveUp(element: move!)
+                break
+            case InsetionSortOperation.moveRight:
+                let leftMove = self.path.pop()
+                self.inverseMoveRightToLeft(right: move!, left: leftMove!)
+                break
+            case InsetionSortOperation.moveDown:
+                self.inverseMoveDown(element: move!)
+                break
+            case InsetionSortOperation.grayOutFirstElement:
+                self.inverseGrayOut(element: move!)
+                break
+            default:
+                break
+        }
     }
     
     public func shuffle() {
         
     }
+    
+    // MARK: - Insertion Sort
+    public func insertionSort(list:[Int]) -> [Int] {
+        
+        var A = list
+        for primaryIndex in 1..<A.count {
+            
+            let key = A[primaryIndex]
+            var secondaryIndex = primaryIndex - 1
+            
+            while (secondaryIndex >= 0 && key > A[secondaryIndex]) {
+                A[secondaryIndex+1] = A[secondaryIndex]
+                secondaryIndex-=1
+            }
+            
+            A[secondaryIndex+1] = key
+            
+        }
+        
+        return A
+    }
+
 
 }
