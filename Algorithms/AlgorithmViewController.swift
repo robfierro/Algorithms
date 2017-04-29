@@ -11,7 +11,7 @@ import UIKit
 protocol AlgorithmDelegate: class {
     func solve()
     func step(shouldStopSolve:Bool)
-    func back()
+    func back(shouldStopSolve:Bool)
     func shuffle()
 }
 
@@ -134,5 +134,10 @@ class AlgorithmViewController: UIViewController {
     @IBAction func stepByStepAlgorithm(_ sender: AnyObject) {
         self.delegate?.step(shouldStopSolve:true)
     }
+    
+    @IBAction func stepBackAlgorithm(_ sender: AnyObject) {
+        self.delegate?.back(shouldStopSolve: true)
+    }
+    
 
 }
